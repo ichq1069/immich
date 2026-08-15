@@ -208,9 +208,7 @@ services:
 
   immich-server:
     container_name: immich_server
-    build:
-      context: .
-      dockerfile: server/Dockerfile
+    image: ghcr.io/ichq1069/immich-server:latest
     volumes:
       - {upload}:/data:rw
       - /etc/localtime:/etc/localtime:ro{ext_volumes}
@@ -231,9 +229,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    build:
-      context: .
-      dockerfile: machine-learning/Dockerfile
+    image: ghcr.io/ichq1069/immich-machine-learning:latest
     volumes:
       - model-cache:/cache
     env_file:
