@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Immich + R2 配置生成器</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --card: #16213e;
+    --input: #0f3460;
+    --accent: #e94560;
+    --text: #eee;
+    --dim: #8892b0;
+    --green: #2ecc71;
+    --warn: #f39c12;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
+  h1 span { color: var(--accent); }
+
+  .status-bar {
+    background: #0a0a1a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85em;
+  }
+  .status-bar .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .status-bar .dot.online { background: var(--green); }
+  .status-bar .dot.offline { background: var(--warn); }
+  .status-bar .saved { color: var(--green); font-weight: bold; }
+
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.1em;
+    margin-bottom: 16px;
+    color: var(--accent);
+    border-bottom: 1px solid #2a2a4a;
+    padding-bottom: 8px;
+  }
+  .row { display: flex; gap: 14px; }
+  .row .field { flex: 1; }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 0.85em;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+  .field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    background: var(--input);
+    color: var(--text);
+    font-size: 0.95em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .field input::placeholder { color: #555; }
+  .field .hint { font-size: 0.78em; color: #555; margin-top: 2px; }
+  .field .pw { display: flex; gap: 8px; }
+  .field .pw input { flex: 1; }
+  .field .pw button {
+    padding: 0 16px;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+  .field .pw button:hover { background: var(--accent); color: #fff; }
+  .actions { text-align: center; margin: 24px 0; }
+  .actions button {
+    padding: 12px 40px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05em;
+    cursor: pointer;
+    margin: 0 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-save { background: var(--accent); color: #fff; }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-down { background: var(--green); color: #fff; }
+  .btn-down:hover { opacity: 0.85; }
+  .btn-down:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    z-index: 100;
+    display: none;
+  }
+  .toast.success { background: var(--green); color: #fff; }
+  .toast.error { background: var(--accent); color: #fff; }
+  .toast.show { display: block; animation: fadeIn 0.3s; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+
+  .output {
+    background: #0a0a1a;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+    display: none;
+  }
+  .output.show { display: block; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .tab {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--input);
+    color: var(--dim);
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: #fff; }
+  pre {
+    background: #000;
+    border-radius: 6px;
+    padding: 14px;
+    overflow-x: auto;
+    font-size: 0.82em;
+    line-height: 1.5;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .copy-btn {
+    float: right;
+    padding: 4px 12px;
+    border: 1px solid var(--dim);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .clear { clear: both; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Immich <span>+</span> Cloudflare R2 配置生成器</h1>
+
+  <div class="status-bar">
+    <span>
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">检测中...</span>
+    </span>
+    <span class="saved" id="savedBadge" style="display:none">已保存到服务器</span>
+  </div>
+
+  <!-- R2 配置 -->
+  <div class="card">
+    <h2>Cloudflare R2 存储</h2>
+    <div class="row">
+      <div class="field">
+        <label>Access Key ID</label>
+        <input id="r2_key" placeholder="从 R2 管理面板获取">
+      </div>
+      <div class="field">
+        <label>Secret Access Key</label>
+        <input id="r2_secret" placeholder="从 R2 管理面板获取">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Endpoint</label>
+        <input id="r2_endpoint" placeholder="https://账户ID.r2.cloudflarestorage.com">
+      </div>
+      <div class="field">
+        <label>Bucket 名称</label>
+        <input id="r2_bucket" value="immich" placeholder="immich">
+      </div>
+    </div>
+  </div>
+
+  <!-- 数据库配置 -->
+  <div class="card">
+    <h2>数据库</h2>
+    <div class="row">
+      <div class="field">
+        <label>用户名</label>
+        <input id="db_user" value="postgres">
+      </div>
+      <div class="field">
+        <label>密码</label>
+        <div class="pw">
+          <input id="db_pass" placeholder="留空自动生成">
+          <button onclick="generatePassword()">生成随机密码</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>数据库名</label>
+        <input id="db_name" value="immich">
+      </div>
+    </div>
+  </div>
+
+  <!-- 路径配置 -->
+  <div class="card">
+    <h2>存储路径</h2>
+    <div class="row">
+      <div class="field">
+        <label>照片存储路径（R2 挂载点）</label>
+        <input id="upload_path" value="/root/immich-app/r2-immich-photo">
+      </div>
+      <div class="field">
+        <label>数据库存储路径（本地 SSD）</label>
+        <input id="db_path" value="/root/immich-app/postgres">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>外部图库 1（可选）</label>
+        <input id="ext_lib1" placeholder="/root/immich-app/library">
+      </div>
+      <div class="field">
+        <label>外部图库 2（可选）</label>
+        <input id="ext_lib2" placeholder="/root/immich-app/pikpak">
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用 -->
+  <div class="card">
+    <h2>通用</h2>
+    <div class="row">
+      <div class="field">
+        <label>时区</label>
+        <input id="tz" value="Asia/Shanghai">
+      </div>
+      <div class="field">
+        <label>Immich 版本</label>
+        <input id="version" value="v3">
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-save" id="btnSave" onclick="saveToServer()">保存到服务器</button>
+    <button class="btn-down" id="btnDown" onclick="downloadFiles()">下载到本地</button>
+  </div>
+
+  <div id="output" class="output">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('env')">.env</button>
+      <button class="tab" onclick="switchTab('compose')">docker-compose.yml</button>
+    </div>
+    <button class="copy-btn" onclick="copyContent()">复制</button>
+    <div class="clear"></div>
+    <pre id="code"></pre>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = window.location.origin;
+let currentTab = 'env';
+let envContent = '';
+let composeContent = '';
+
+function getData() {
+  let db_pass = document.getElementById('db_pass').value;
+  if (!db_pass) { generatePassword(); db_pass = document.getElementById('db_pass').value; }
+  return {
+    r2_access_key_id: document.getElementById('r2_key').value,
+    r2_secret_access_key: document.getElementById('r2_secret').value,
+    r2_endpoint: document.getElementById('r2_endpoint').value,
+    r2_bucket_name: document.getElementById('r2_bucket').value || 'immich',
+    db_username: document.getElementById('db_user').value || 'postgres',
+    db_password: db_pass,
+    db_database_name: document.getElementById('db_name').value || 'immich',
+    upload_location: document.getElementById('upload_path').value || '/root/immich-app/r2-immich-photo',
+    db_data_location: document.getElementById('db_path').value || '/root/immich-app/postgres',
+    ext_library_1: document.getElementById('ext_lib1').value,
+    ext_library_2: document.getElementById('ext_lib2').value,
+    tz: document.getElementById('tz').value || 'Asia/Shanghai',
+    immich_version: document.getElementById('version').value || 'v3',
+  };
+}
+
+function generatePassword() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let pw = '';
+  for (let i = 0; i < 16; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('db_pass').value = pw;
+}
+
+async function saveToServer() {
+  const data = getData();
+  const required = ['r2_access_key_id', 'r2_secret_access_key', 'r2_endpoint'];
+  for (const key of required) {
+    if (!data[key]) { showToast('请填写 R2 存储配置的所有必填项', 'error'); return; }
+  }
+
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+
+  try {
+    const resp = await fetch(API_BASE + '/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await resp.json();
+    if (result.ok) {
+      document.getElementById('savedBadge').style.display = 'inline';
+      showToast('配置已保存到服务器！可执行 docker compose up -d 启动', 'success');
+      await generatePreview();
+    } else {
+      showToast('保存失败: ' + (result.error || '未知错误'), 'error');
+    }
+  } catch (e) {
+    showToast('无法连接服务器: ' + e.message, 'error');
+    document.getElementById('statusDot').className = 'dot offline';
+    document.getElementById('statusText').textContent = '离线模式（仅可下载）';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '保存到服务器';
+  }
+}
+
+async function generatePreview() {
+  const data = getData();
+  try {
+    const resp = await fetch(API_BASE + '/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await resp.json();
+    envContent = result.env;
+    composeContent = result.compose;
+    document.getElementById('output').classList.add('show');
+    switchTab('env');
+  } catch (e) {}
+}
+
+function downloadFiles() {
+  const data = getData();
+  generateLocal(data);
+  const blob1 = new Blob([envContent], {type: 'text/plain'});
+  const a1 = document.createElement('a');
+  a1.href = URL.createObjectURL(blob1);
+  a1.download = '.env';
+  a1.click();
+
+  const blob2 = new Blob([composeContent], {type: 'text/yaml'});
+  const a2 = document.createElement('a');
+  a2.href = URL.createObjectURL(blob2);
+  a2.download = 'docker-compose.yml';
+  a2.click();
+}
+
+function generateLocal(data) {
+  envContent = `R2_ACCESS_KEY_ID=${data.r2_access_key_id}
+R2_SECRET_ACCESS_KEY=${data.r2_secret_access_key}
+R2_ENDPOINT=${data.r2_endpoint}
+R2_BUCKET_NAME=${data.r2_bucket_name}
+UPLOAD_LOCATION=${data.upload_location}
+DB_DATA_LOCATION=${data.db_data_location}
+DB_USERNAME=${data.db_username}
+DB_PASSWORD=${data.db_password}
+DB_DATABASE_NAME=${data.db_database_name}
+REDIS_HOSTNAME=immich_redis
+TZ=${data.tz}
+IMMICH_VERSION=${data.immich_version}
+IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003`;
+
+  let extVolumes = '';
+  if (data.ext_library_1) extVolumes += `\n      - ${data.ext_library_1}:/mnt/library:ro`;
+  if (data.ext_library_2) extVolumes += `\n      - ${data.ext_library_2}:/mnt/pikpak:ro`;
+
+  composeContent = `name: immich
+
+services:
+  rclone:
+    image: rclone/rclone:1.70
+    container_name: immich_rclone
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse
+    environment:
+      - R2_ACCESS_KEY_ID=\${R2_ACCESS_KEY_ID}
+      - R2_SECRET_ACCESS_KEY=\${R2_SECRET_ACCESS_KEY}
+      - R2_ENDPOINT=\${R2_ENDPOINT}
+      - R2_BUCKET_NAME=\${R2_BUCKET_NAME}
+    volumes:
+      - rclone-cache:/cache
+      - ${data.upload_location}:/data:shared
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mkdir -p /root/.config/rclone
+        cat > /root/.config/rclone/rclone.conf << RCLONE_EOF
+        [r2]
+        type = s3
+        provider = Cloudflare
+        access_key_id = \\$\\$R2_ACCESS_KEY_ID
+        secret_access_key = \\$\\$R2_SECRET_ACCESS_KEY
+        endpoint = \\$\\$R2_ENDPOINT
+        acl = private
+        RCLONE_EOF
+        exec rclone mount r2:\\$\\$R2_BUCKET_NAME /data \\\\
+          --allow-other \\\\
+          --allow-non-empty \\\\
+          --vfs-cache-mode writes \\\\
+          --vfs-cache-max-age 1h \\\\
+          --vfs-cache-max-size 10G \\\\
+          --cache-dir /cache \\\\
+          --dir-cache-time 5m \\\\
+          --no-checksum \\\\
+          --log-level INFO
+    restart: always
+    healthcheck:
+      test: ["CMD", "rclone", "about", "r2:\\$\\$R2_BUCKET_NAME"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:\${IMMICH_VERSION:-release}
+    volumes:
+      - ${data.upload_location}:/data:rw
+      - /etc/localtime:/etc/localtime:ro${extVolumes}
+    env_file:
+      - .env
+    ports:
+      - '2283:2283'
+    depends_on:
+      rclone:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      database:
+        condition: service_started
+    restart: always
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:\${IMMICH_VERSION:-release}
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      disable: false
+
+  redis:
+    container_name: immich_redis
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    healthcheck:
+      test: redis-cli ping || exit 1
+    restart: always
+
+  database:
+    container_name: immich_postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    environment:
+      POSTGRES_PASSWORD: \${DB_PASSWORD}
+      POSTGRES_USER: \${DB_USERNAME}
+      POSTGRES_DB: \${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - ${data.db_data_location}:/var/lib/postgresql/data
+    shm_size: 128mb
+    restart: always
+    healthcheck:
+      disable: false
+
+volumes:
+  model-cache:
+  rclone-cache:`;
+
+  document.getElementById('output').classList.add('show');
+  switchTab('env');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('code').textContent = tab === 'env' ? envContent : composeContent;
+}
+
+function copyContent() {
+  const content = currentTab === 'env' ? envContent : composeContent;
+  navigator.clipboard.writeText(content).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1500);
+  });
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// 检测服务器连接状态
+async function checkServer() {
+  try {
+    const resp = await fetch(API_BASE + '/api/health');
+    if (resp.ok) {
+      document.getElementById('statusDot').className = 'dot online';
+      document.getElementById('statusText').textContent = '服务器在线';
+      document.getElementById('btnSave').disabled = false;
+    }
+  } catch (e) {
+    document.getElementById('statusDot').className = 'dot offline';
+    document.getElementById('statusText').textContent = '离线模式（仅可下载）';
+    document.getElementById('btnSave').disabled = true;
+  }
+}
+checkServer();
+</script>
+</body>
+</html>
