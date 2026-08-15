@@ -23,6 +23,8 @@ class ConfigHandler(http.server.SimpleHTTPRequestHandler):
             self._serve_html()
         elif parsed.path == "/api/health":
             self._json({"status": "ok", "host": self.server_host})
+        elif parsed.path == "/api/config":
+            self._handle_get_config()
         else:
             self._json({"error": "not found"}, 404)
 
@@ -79,6 +81,21 @@ acl = private
             self._json({"ok": False, "error": "服务器未安装 rclone，请先执行 apt install rclone"})
         finally:
             os.unlink(config_path)
+
+    def _handle_get_config(self):
+        env_path = os.path.join(self.target_dir, ".env")
+        if not os.path.exists(env_path):
+            self._json({})
+            return
+
+        config = {}
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if "=" in line and not line.startswith("#"):
+                    key, _, value = line.partition("=")
+                    config[key.strip()] = value.strip()
+        self._json(config)
 
     def _handle_save(self):
         length = int(self.headers.get("Content-Length", 0))

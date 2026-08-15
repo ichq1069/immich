@@ -606,12 +606,32 @@ async function checkServer() {
       document.getElementById('statusDot').className = 'dot online';
       document.getElementById('statusText').textContent = '服务器在线';
       document.getElementById('btnSave').disabled = false;
+      loadConfig();
     }
   } catch (e) {
     document.getElementById('statusDot').className = 'dot offline';
     document.getElementById('statusText').textContent = '离线模式（仅可下载）';
     document.getElementById('btnSave').disabled = true;
   }
+}
+
+// 加载已有配置回填表单
+async function loadConfig() {
+  try {
+    const resp = await fetch(API_BASE + '/api/config');
+    const cfg = await resp.json();
+    if (cfg.R2_ACCESS_KEY_ID) document.getElementById('r2_key').value = cfg.R2_ACCESS_KEY_ID;
+    if (cfg.R2_SECRET_ACCESS_KEY) document.getElementById('r2_secret').value = cfg.R2_SECRET_ACCESS_KEY;
+    if (cfg.R2_ENDPOINT) document.getElementById('r2_endpoint').value = cfg.R2_ENDPOINT;
+    if (cfg.R2_BUCKET_NAME) document.getElementById('r2_bucket').value = cfg.R2_BUCKET_NAME;
+    if (cfg.DB_USERNAME) document.getElementById('db_user').value = cfg.DB_USERNAME;
+    if (cfg.DB_PASSWORD) document.getElementById('db_pass').value = cfg.DB_PASSWORD;
+    if (cfg.DB_DATABASE_NAME) document.getElementById('db_name').value = cfg.DB_DATABASE_NAME;
+    if (cfg.UPLOAD_LOCATION) document.getElementById('upload_path').value = cfg.UPLOAD_LOCATION;
+    if (cfg.DB_DATA_LOCATION) document.getElementById('db_path').value = cfg.DB_DATA_LOCATION;
+    if (cfg.TZ) document.getElementById('tz').value = cfg.TZ;
+    if (cfg.IMMICH_VERSION) document.getElementById('version').value = cfg.IMMICH_VERSION;
+  } catch (e) {}
 }
 checkServer();
 </script>
