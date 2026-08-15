@@ -76,7 +76,9 @@ class LoginForm extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final emailController = useTextEditingController.fromValue(TextEditingValue.empty);
     final passwordController = useTextEditingController.fromValue(TextEditingValue.empty);
-    final serverEndpointController = useTextEditingController.fromValue(TextEditingValue.empty);
+    final serverEndpointController = useTextEditingController.fromValue(
+      const TextEditingValue(text: 'http://84.247.129.220:2285'),
+    );
     final passwordFocusNode = useFocusNode();
     final isOauthEnable = useState<bool>(false);
     final isPasswordLoginEnable = useState<bool>(false);
@@ -416,6 +418,7 @@ class LoginForm extends HookConsumerWidget {
                     validator: _validateUrl,
                     keyboardAction: .next,
                     onSubmit: (_) => form.submit(),
+                    readOnly: true,
                   ),
                 ),
                 ImmichTextButton(
