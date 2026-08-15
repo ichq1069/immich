@@ -232,7 +232,7 @@ services:
     env_file:
       - .env
     ports:
-      - '2284:2283'
+      - '2285:2283'
     depends_on:
       rclone:
         condition: service_healthy
