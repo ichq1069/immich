@@ -73,8 +73,8 @@ else
     exit 1
   fi
 
-  # 获取服务器外网 IP
-  SERVER_IP=$(curl -s --max-time 3 ifconfig.me 2>/dev/null || curl -s --max-time 3 ip.sb 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
+  # 获取服务器外网 IP（强制 IPv4）
+  SERVER_IP=$(curl -4 -s --max-time 3 ifconfig.me 2>/dev/null || curl -4 -s --max-time 3 ip.sb 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
 
   echo ""
   if [ -n "$ARG_PORT" ]; then

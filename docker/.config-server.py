@@ -266,7 +266,8 @@ volumes:
 """
 
     def _serve_html(self):
-        html_path = os.path.join(self.target_dir, "config.html")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        html_path = os.path.join(script_dir, "config.html")
         if not os.path.exists(html_path):
             self._json({"error": "config.html not found"}, 404)
             return
