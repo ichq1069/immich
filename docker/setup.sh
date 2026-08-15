@@ -40,10 +40,10 @@ if [ "$CHOICE" = "1" ]; then
   R2_BUCKET_NAME=${R2_BUCKET_NAME:-immich}
 
   echo -e "${YELLOW}[2/4] 存储路径配置${NC}"
-  read -p "照片存储目录 (默认: /root/immich-app/r2-immich-photo): " UPLOAD_LOCATION
-  UPLOAD_LOCATION=${UPLOAD_LOCATION:-/root/immich-app/r2-immich-photo}
-  read -p "数据库存储目录 (默认: /root/immich-app/postgres): " DB_DATA_LOCATION
-  DB_DATA_LOCATION=${DB_DATA_LOCATION:-/root/immich-app/postgres}
+  read -p "照片存储目录 (默认: /root/immich-tk/r2-immich-photo): " UPLOAD_LOCATION
+  UPLOAD_LOCATION=${UPLOAD_LOCATION:-/root/immich-tk/r2-immich-photo}
+  read -p "数据库存储目录 (默认: /root/immich-tk/postgres): " DB_DATA_LOCATION
+  DB_DATA_LOCATION=${DB_DATA_LOCATION:-/root/immich-tk/postgres}
 
   echo -e "${YELLOW}[3/4] 数据库配置${NC}"
   read -p "数据库用户名 (默认: postgres): " DB_USERNAME
