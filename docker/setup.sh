@@ -97,8 +97,9 @@ else
   echo -e "按 ${RED}Ctrl+C${NC} 停止服务"
   echo ""
 
-  # 启动 Python 配置服务器
-  python3 "$SERVER_SCRIPT" "$SCRIPT_DIR" "$CONFIG_PORT" "$SERVER_IP"
+  # 启动 Python 配置服务器（target_dir 指向 docker/ 的上级目录）
+  PARENT_DIR="$(dirname "$SCRIPT_DIR")"
+  python3 "$SERVER_SCRIPT" "$PARENT_DIR" "$CONFIG_PORT" "$SERVER_IP"
   exit 0
 fi
 
