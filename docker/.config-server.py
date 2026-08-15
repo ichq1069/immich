@@ -156,10 +156,10 @@ DB_DATA_LOCATION={data['db_data_location']}
 DB_USERNAME={data['db_username']}
 DB_PASSWORD={data['db_password']}
 DB_DATABASE_NAME={data['db_database_name']}
-        REDIS_HOSTNAME=immich_tk_redis
-        TZ={data['tz']}
-        IMMICH_VERSION={data['immich_version']}
-        IMMICH_MACHINE_LEARNING_URL=http://immich_tk_machine_learning:3003
+REDIS_HOSTNAME=immich_tk_redis
+TZ={data['tz']}
+IMMICH_VERSION={data['immich_version']}
+IMMICH_MACHINE_LEARNING_URL=http://immich_tk_machine_learning:3003
 """
 
     def _render_compose(self, data, ext_lib1, ext_lib2):
