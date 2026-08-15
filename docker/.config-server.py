@@ -9,6 +9,10 @@ import tempfile
 import urllib.parse
 
 
+class ReuseAddrHTTPServer(http.server.HTTPServer):
+    allow_reuse_address = True
+
+
 class ConfigHandler(http.server.SimpleHTTPRequestHandler):
     target_dir: str = ""
     server_host: str = ""
@@ -309,7 +313,7 @@ def main():
     ConfigHandler.server_host = host
     os.chdir(target_dir)
 
-    server = http.server.HTTPServer(("0.0.0.0", port), ConfigHandler)
+    server = ReuseAddrHTTPServer(("0.0.0.0", port), ConfigHandler)
     display_host = host or "0.0.0.0"
     print(f"配置服务器已启动: http://{display_host}:{port}/config.html", file=sys.stderr)
     try:
