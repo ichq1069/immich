@@ -107,6 +107,18 @@
   .btn-down { background: var(--green); color: #fff; }
   .btn-down:hover { opacity: 0.85; }
   .btn-down:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-check {
+    padding: 6px 16px;
+    border: 1px solid var(--dim);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .btn-check:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-check:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .toast {
     position: fixed;
@@ -207,6 +219,8 @@
         <input id="r2_bucket" value="immich" placeholder="immich">
       </div>
     </div>
+    <button class="btn-check" id="btnCheckR2" onclick="checkR2()">检查 R2 连通性</button>
+    <span id="r2CheckResult" style="margin-left: 12px; font-size: 0.85em;"></span>
   </div>
 
   <!-- 数据库配置 -->
@@ -313,6 +327,45 @@ function getData() {
     tz: document.getElementById('tz').value || 'Asia/Shanghai',
     immich_version: document.getElementById('version').value || 'v3',
   };
+}
+
+async function checkR2() {
+  const data = {
+    r2_access_key_id: document.getElementById('r2_key').value,
+    r2_secret_access_key: document.getElementById('r2_secret').value,
+    r2_endpoint: document.getElementById('r2_endpoint').value,
+    r2_bucket_name: document.getElementById('r2_bucket').value || 'immich',
+  };
+  if (!data.r2_access_key_id || !data.r2_secret_access_key || !data.r2_endpoint) {
+    showToast('请先填写 R2 的 Access Key、Secret Key 和 Endpoint', 'error');
+    return;
+  }
+  const btn = document.getElementById('btnCheckR2');
+  const result = document.getElementById('r2CheckResult');
+  btn.disabled = true;
+  btn.textContent = '检测中...';
+  result.style.color = '#8892b0';
+  result.textContent = '';
+  try {
+    const resp = await fetch(API_BASE + '/api/check-r2', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const r = await resp.json();
+    if (r.ok) {
+      result.style.color = '#2ecc71';
+      result.textContent = r.message;
+    } else {
+      result.style.color = '#e94560';
+      result.textContent = r.error || '连接失败';
+    }
+  } catch (e) {
+    result.style.color = '#e94560';
+    result.textContent = '无法连接服务器';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '检查 R2 连通性';
+  }
 }
 
 function generatePassword() {

@@ -3,21 +3,22 @@
 import http.server
 import json
 import os
-import shutil
+import subprocess
 import sys
+import tempfile
 import urllib.parse
-from pathlib import Path
 
 
 class ConfigHandler(http.server.SimpleHTTPRequestHandler):
     target_dir: str = ""
+    server_host: str = ""
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/config.html":
             self._serve_html()
         elif parsed.path == "/api/health":
-            self._json({"status": "ok"})
+            self._json({"status": "ok", "host": self.server_host})
         else:
             self._json({"error": "not found"}, 404)
 
@@ -26,8 +27,54 @@ class ConfigHandler(http.server.SimpleHTTPRequestHandler):
             self._handle_save()
         elif self.path == "/api/generate":
             self._handle_generate()
+        elif self.path == "/api/check-r2":
+            self._handle_check_r2()
         else:
             self._json({"error": "not found"}, 404)
+
+    def _handle_check_r2(self):
+        length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(length).decode("utf-8")
+        data = json.loads(body)
+
+        key_id = data.get("r2_access_key_id", "")
+        secret = data.get("r2_secret_access_key", "")
+        endpoint = data.get("r2_endpoint", "")
+        bucket = data.get("r2_bucket_name", "")
+
+        if not all([key_id, secret, endpoint, bucket]):
+            self._json({"ok": False, "error": "请填写完整的 R2 配置"}, 400)
+            return
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".conf", delete=False) as f:
+            f.write(f"""[r2]
+type = s3
+provider = Cloudflare
+access_key_id = {key_id}
+secret_access_key = {secret}
+endpoint = {endpoint}
+acl = private
+""")
+            config_path = f.name
+
+        try:
+            result = subprocess.run(
+                ["rclone", "ls", f"r2:{bucket}", "--config", config_path,
+                 "--max-depth", "1", "--fast-list", "--no-check-certificate"],
+                capture_output=True, text=True, timeout=15
+            )
+            if result.returncode == 0:
+                items = [l for l in result.stdout.strip().split("\n") if l]
+                self._json({"ok": True, "message": f"连接成功，存储桶中有 {len(items)} 个对象"})
+            else:
+                err = result.stderr.strip() or "连接失败"
+                self._json({"ok": False, "error": err[:300]})
+        except subprocess.TimeoutExpired:
+            self._json({"ok": False, "error": "连接超时，请检查 Endpoint 是否正确"})
+        except FileNotFoundError:
+            self._json({"ok": False, "error": "服务器未安装 rclone，请先执行 apt install rclone"})
+        finally:
+            os.unlink(config_path)
 
     def _handle_save(self):
         length = int(self.headers.get("Content-Length", 0))
@@ -251,17 +298,20 @@ volumes:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: config-server.py <target_dir> [port]", file=sys.stderr)
+        print("Usage: config-server.py <target_dir> [port] [host]", file=sys.stderr)
         sys.exit(1)
 
     target_dir = os.path.abspath(sys.argv[1])
     port = int(sys.argv[2]) if len(sys.argv) > 2 else 8080
+    host = sys.argv[3] if len(sys.argv) > 3 else ""
 
     ConfigHandler.target_dir = target_dir
+    ConfigHandler.server_host = host
     os.chdir(target_dir)
 
     server = http.server.HTTPServer(("0.0.0.0", port), ConfigHandler)
-    print(f"配置服务器已启动: http://0.0.0.0:{port}/config.html", file=sys.stderr)
+    display_host = host or "0.0.0.0"
+    print(f"配置服务器已启动: http://{display_host}:{port}/config.html", file=sys.stderr)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

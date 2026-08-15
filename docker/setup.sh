@@ -99,7 +99,7 @@ else
   echo ""
 
   # 启动 Python 配置服务器
-  python3 "$SERVER_SCRIPT" "$SCRIPT_DIR" "$CONFIG_PORT"
+  python3 "$SERVER_SCRIPT" "$SCRIPT_DIR" "$CONFIG_PORT" "$SERVER_IP"
   exit 0
 fi
 
