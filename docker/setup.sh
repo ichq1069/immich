@@ -84,6 +84,20 @@ else
     CONFIG_PORT=${CONFIG_PORT:-8080}
   fi
 
+  # 检查端口是否被占用
+  EXISTING_PID=$(lsof -ti :$CONFIG_PORT 2>/dev/null)
+  if [ -n "$EXISTING_PID" ]; then
+    echo -e "${YELLOW}端口 $CONFIG_PORT 已被进程 $EXISTING_PID 占用${NC}"
+    read -p "是否关闭该进程? (y/N): " KILL_CHOICE
+    if [ "$KILL_CHOICE" = "y" ] || [ "$KILL_CHOICE" = "Y" ]; then
+      kill $EXISTING_PID 2>/dev/null && echo -e "${GREEN}已关闭进程 $EXISTING_PID${NC}" || echo -e "${RED}关闭失败，请手动处理${NC}"
+      sleep 1
+    else
+      echo -e "${RED}请更换端口或手动关闭进程后重试${NC}"
+      exit 1
+    fi
+  fi
+
   echo ""
   echo -e "${GREEN}============================================="
   echo "  网页配置模式已启动"
