@@ -36,8 +36,8 @@ if [ "$CHOICE" = "1" ]; then
   read -p "R2 Access Key ID: " R2_ACCESS_KEY_ID
   read -p "R2 Secret Access Key: " R2_SECRET_ACCESS_KEY
   read -p "R2 Endpoint: " R2_ENDPOINT
-  read -p "R2 Bucket 名称 (默认: immich): " R2_BUCKET_NAME
-  R2_BUCKET_NAME=${R2_BUCKET_NAME:-immich}
+  read -p "R2 Bucket 名称 (默认: immich-photo): " R2_BUCKET_NAME
+  R2_BUCKET_NAME=${R2_BUCKET_NAME:-immich-photo}
 
   echo -e "${YELLOW}[2/4] 存储路径配置${NC}"
   read -p "照片存储目录 (默认: /root/immich-tk/r2-immich-photo): " UPLOAD_LOCATION
@@ -46,11 +46,10 @@ if [ "$CHOICE" = "1" ]; then
   DB_DATA_LOCATION=${DB_DATA_LOCATION:-/root/immich-tk/postgres}
 
   echo -e "${YELLOW}[3/4] 数据库配置${NC}"
-  read -p "数据库用户名 (默认: postgres): " DB_USERNAME
-  DB_USERNAME=${DB_USERNAME:-postgres}
-  RANDOM_PW=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 16)
-  read -p "数据库密码 (回车自动生成): " DB_PASSWORD
-  DB_PASSWORD=${DB_PASSWORD:-$RANDOM_PW}
+  read -p "数据库用户名 (默认: immich): " DB_USERNAME
+  DB_USERNAME=${DB_USERNAME:-immich}
+  read -p "数据库密码 (默认: immich): " DB_PASSWORD
+  DB_PASSWORD=${DB_PASSWORD:-immich}
   read -p "数据库名 (默认: immich): " DB_DATABASE_NAME
   DB_DATABASE_NAME=${DB_DATABASE_NAME:-immich}
 

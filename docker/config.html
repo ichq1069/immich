@@ -216,7 +216,7 @@
       </div>
       <div class="field">
         <label>Bucket 名称</label>
-        <input id="r2_bucket" value="immich" placeholder="immich">
+        <input id="r2_bucket" value="immich-photo" placeholder="immich-photo">
       </div>
     </div>
     <button class="btn-check" id="btnCheckR2" onclick="checkR2()">检查 R2 连通性</button>
@@ -229,12 +229,12 @@
     <div class="row">
       <div class="field">
         <label>用户名</label>
-        <input id="db_user" value="postgres">
+        <input id="db_user" value="immich">
       </div>
       <div class="field">
         <label>密码</label>
         <div class="pw">
-          <input id="db_pass" placeholder="留空自动生成">
+          <input id="db_pass" value="immich" placeholder="immich">
           <button onclick="generatePassword()">生成随机密码</button>
         </div>
       </div>
