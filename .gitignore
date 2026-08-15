@@ -30,3 +30,7 @@ vite.config.js.timestamp-*
 .devcontainer/.env*
 *.tsbuildinfo
 *.tsbuildInfo
+
+# Immich custom deployment config
+.env
+docker-compose.yml
