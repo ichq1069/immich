@@ -139,7 +139,7 @@ DB_DATA_LOCATION={data['db_data_location']}
 DB_USERNAME={data['db_username']}
 DB_PASSWORD={data['db_password']}
 DB_DATABASE_NAME={data['db_database_name']}
-REDIS_HOSTNAME=immich_redis
+REDIS_HOSTNAME=immich_tk_redis
 TZ={data['tz']}
 IMMICH_VERSION={data['immich_version']}
 IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
@@ -154,12 +154,12 @@ IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
         if ext_lib2:
             ext_volumes += f"\n      - {ext_lib2}:/mnt/pikpak:ro"
 
-        return f"""name: immich
+        return f"""name: immich-tk
 
 services:
   rclone:
     image: rclone/rclone:1.70
-    container_name: immich_rclone
+    container_name: immich_tk_rclone
     privileged: true
     cap_add:
       - SYS_ADMIN
@@ -207,7 +207,7 @@ services:
       start_period: 30s
 
   immich-server:
-    container_name: immich_server
+    container_name: immich_tk_server
     image: ghcr.io/ichq1069/immich-server:latest
     volumes:
       - {upload}:/data:rw
@@ -228,7 +228,7 @@ services:
       disable: false
 
   immich-machine-learning:
-    container_name: immich_machine_learning
+    container_name: immich_tk_machine_learning
     image: ghcr.io/ichq1069/immich-machine-learning:latest
     volumes:
       - model-cache:/cache
@@ -239,14 +239,14 @@ services:
       disable: false
 
   redis:
-    container_name: immich_redis
+    container_name: immich_tk_redis
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
 
   database:
-    container_name: immich_postgres
+    container_name: immich_tk_postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     environment:
       POSTGRES_PASSWORD: ${{DB_PASSWORD}}
