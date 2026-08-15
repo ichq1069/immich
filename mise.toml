@@ -17,22 +17,10 @@ config_roots = [
 [tools]
 node = "24.15.0"
 pnpm = "11.6.0"
-terragrunt = "1.0.3"
-opentofu = "1.11.6"
 "npm:oazapfts" = "7.5.0"
 "github:extism/cli" = "1.6.3"
 "github:webassembly/binaryen" = "version_124"
 "github:extism/js-pdk" = "1.6.0"
-java = "21.0.2"
-
-[tools."github:jellyfin/jellyfin-ffmpeg"]
-version = "7.1.3-6"
-
-[tools."github:jellyfin/jellyfin-ffmpeg".platforms]
-linux-x64 = { asset_pattern = "jellyfin-ffmpeg_*_portable_linux64-gpl.tar.xz" }
-linux-arm64 = { asset_pattern = "jellyfin-ffmpeg_*_portable_linuxarm64-gpl.tar.xz" }
-macos-x64 = { asset_pattern = "jellyfin-ffmpeg_*_portable_mac64-gpl.tar.xz" }
-macos-arm64 = { asset_pattern = "jellyfin-ffmpeg_*_portable_macarm64-gpl.tar.xz" }
 
 [settings]
 experimental = true
