@@ -225,7 +225,7 @@ services:
 
   immich-server:
     container_name: immich_tk_server
-    image: ghcr.io/ichq1069/immich-server:latest
+    image: ghcr.io/immich-app/immich-server:{data['immich_version']}
     volumes:
       - {upload}:/data:rw
       - /etc/localtime:/etc/localtime:ro{ext_volumes}
@@ -246,7 +246,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_tk_machine_learning
-    image: ghcr.io/ichq1069/immich-machine-learning:latest
+    image: ghcr.io/immich-app/immich-machine-learning:{data['immich_version']}
     volumes:
       - model-cache:/cache
     env_file:
