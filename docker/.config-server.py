@@ -209,7 +209,7 @@ services:
   immich-server:
     container_name: immich_server
     build:
-      context: ../
+      context: .
       dockerfile: server/Dockerfile
     volumes:
       - {upload}:/data:rw
@@ -232,7 +232,7 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     build:
-      context: ../
+      context: .
       dockerfile: machine-learning/Dockerfile
     volumes:
       - model-cache:/cache
