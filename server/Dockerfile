@@ -56,6 +56,7 @@ RUN --mount=type=cache,id=pnpm-cli,target=/buildcache/pnpm-store \
 FROM builder AS plugins
 
 ARG TARGETPLATFORM
+ARG GITHUB_TOKEN
 
 COPY --from=ghcr.io/jdx/mise:2026.6.10@sha256:f57ac375a262f52f8ac3f9101348dbff2187d5e4b59612154f2f2808dbe46ef6 /usr/local/bin/mise /usr/local/bin/mise
 
@@ -65,6 +66,7 @@ COPY ./packages/plugin-core/mise.toml ./packages/plugin-core/
 ENV MISE_TRUSTED_CONFIG_PATHS=/app/mise.toml
 ENV MISE_DATA_DIR=/buildcache/mise
 ENV MISE_DISABLE_TOOLS=flutter
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 RUN --mount=type=cache,id=mise-tools-${TARGETPLATFORM},target=/buildcache/mise \
   mise install
 
