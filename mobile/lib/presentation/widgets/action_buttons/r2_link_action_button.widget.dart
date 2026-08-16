@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
@@ -16,7 +17,7 @@ class R2LinkActionButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final icon = Icon(Icons.link_variant, color: Colors.white, size: iconOnly ? null : 20);
+    final icon = Icon(Icons.link, color: Colors.white, size: iconOnly ? null : 20);
     final label = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: const Text('R2 直链', style: TextStyle(color: Colors.white)),
@@ -43,7 +44,7 @@ class R2LinkActionButton extends ConsumerWidget {
         .toList();
 
     if (ids.isEmpty) {
-      ImmichToast.show(message: '没有远程资产可创建直链', context: context);
+      ImmichToast.show(msg: '没有远程资产可创建直链', context: context);
       return;
     }
 
@@ -52,11 +53,11 @@ class R2LinkActionButton extends ConsumerWidget {
       final r2Service = R2LinkService(apiService);
       final links = await r2Service.createLinks(assetIds: ids, expiresIn: '24h');
       if (context.mounted) {
-        ImmichToast.show(message: '已生成 ${links.length} 条直链', context: context);
+        ImmichToast.show(msg: '已生成 ${links.length} 条直链', context: context);
       }
     } catch (e) {
       if (context.mounted) {
-        ImmichToast.show(message: '创建直链失败: $e', context: context);
+        ImmichToast.show(msg: '创建直链失败: $e', context: context);
       }
     }
   }

@@ -40,7 +40,7 @@ class _R2LinkPageState extends ConsumerState<R2LinkPage> {
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        ImmichToast.show(message: '加载直链失败: $e', context: context);
+        ImmichToast.show(msg: '加载直链失败: $e', context: context);
       }
     }
   }
@@ -49,11 +49,11 @@ class _R2LinkPageState extends ConsumerState<R2LinkPage> {
     try {
       await Clipboard.setData(ClipboardData(text: url));
       if (mounted) {
-        ImmichToast.show(message: '链接已复制到剪贴板', context: context);
+        ImmichToast.show(msg: '链接已复制到剪贴板', context: context);
       }
     } catch (e) {
       if (mounted) {
-        ImmichToast.show(message: '复制失败: $e', context: context);
+        ImmichToast.show(msg: '复制失败: $e', context: context);
       }
     }
   }
@@ -64,12 +64,12 @@ class _R2LinkPageState extends ConsumerState<R2LinkPage> {
       final r2Service = R2LinkService(apiService);
       await r2Service.revokeLink(id);
       if (mounted) {
-        ImmichToast.show(message: '直链已撤销', context: context);
+        ImmichToast.show(msg: '直链已撤销', context: context);
         _loadLinks();
       }
     } catch (e) {
       if (mounted) {
-        ImmichToast.show(message: '撤销失败: $e', context: context);
+        ImmichToast.show(msg: '撤销失败: $e', context: context);
       }
     }
   }
