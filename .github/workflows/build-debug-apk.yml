@@ -24,11 +24,25 @@ jobs:
           flutter-version: '3.44.1'
           channel: 'stable'
 
+      - name: Generate translations loader
+        working-directory: mobile
+        run: dart run easy_localization:generate -S ../i18n
+
+      - name: Generate translations keys
+        working-directory: mobile
+        run: dart run bin/generate_keys.dart
+
+      - name: Run build_runner
+        working-directory: mobile
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Format generated files
+        working-directory: mobile
+        run: dart format lib/generated/
+
       - name: Build APK
         working-directory: mobile
-        run: |
-          flutter pub get
-          flutter build apk --debug
+        run: flutter build apk --debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
