@@ -16,12 +16,12 @@ export class R2LinkTable {
   @Column({ type: 'text' })
   url!: string;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   expiresAt!: Timestamp | null;
 
   @CreateDateColumn()
   createdAt!: Generated<Timestamp>;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   revokedAt!: Timestamp | null;
 }

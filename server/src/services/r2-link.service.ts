@@ -5,7 +5,7 @@ import { AccessRepository } from 'src/repositories/access.repository';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { requireAccess } from 'src/utils/access';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { AuthDto } from 'src/dtos/auth.dto';
 import { Permission } from 'src/enum';
 import { ConfigRepository } from 'src/repositories/config.repository';
 
@@ -22,12 +22,12 @@ export class R2LinkService {
     private configRepository: ConfigRepository,
   ) {}
 
-  async createLinks(authUser: AuthUser, assetIds: string[], expiresIn: R2ExpiresIn) {
+  async createLinks(auth: AuthDto, assetIds: string[], expiresIn: R2ExpiresIn) {
     const assetIdsList = [...new Set(assetIds)];
 
     await requireAccess(this.accessRepository, {
-      authUser,
-      permission: Permission.ASSET_DOWNLOAD,
+      auth,
+      permission: Permission.AssetDownload,
       ids: assetIdsList,
     });
 
@@ -46,7 +46,7 @@ export class R2LinkService {
       const url = await this.generatePresignedUrl(s3Client, r2Key, expiresAt);
       const link = await this.r2LinkRepository.create({
         assetId,
-        userId: authUser.user.id,
+        userId: auth.user.id,
         url,
         expiresAt,
       });
@@ -57,16 +57,16 @@ export class R2LinkService {
     return results;
   }
 
-  async getLinks(authUser: AuthUser) {
-    return this.r2LinkRepository.getByUserId(authUser.user.id);
+  async getLinks(auth: AuthDto) {
+    return this.r2LinkRepository.getByUserId(auth.user.id);
   }
 
-  async revokeLink(authUser: AuthUser, id: string) {
-    return this.r2LinkRepository.revoke(id, authUser.user.id);
+  async revokeLink(auth: AuthDto, id: string) {
+    return this.r2LinkRepository.revoke(id, auth.user.id);
   }
 
-  async revokeLinks(authUser: AuthUser, ids: string[]) {
-    return this.r2LinkRepository.revokeAll(ids, authUser.user.id);
+  async revokeLinks(auth: AuthDto, ids: string[]) {
+    return this.r2LinkRepository.revokeAll(ids, auth.user.id);
   }
 
   private createS3Client(): S3Client {

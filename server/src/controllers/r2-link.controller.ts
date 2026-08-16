@@ -1,7 +1,9 @@
-import { Controller, Delete, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Body, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUser, Authenticated } from 'src/decorators/auth-user.decorator';
-import { AuthUserDto } from 'src/dto/auth-user.dto';
+import { Auth, Authenticated } from 'src/middleware/auth.guard';
+import { Endpoint } from 'src/decorators';
+import { AuthDto } from 'src/dtos/auth.dto';
+import { Permission } from 'src/enum';
 import { R2LinkService, R2ExpiresIn } from 'src/services/r2-link.service';
 
 class CreateR2LinksDto {
@@ -15,27 +17,34 @@ class RevokeR2LinksDto {
 
 @ApiTags('R2 Links')
 @Controller('r2-links')
-@Authenticated()
 export class R2LinkController {
   constructor(private r2LinkService: R2LinkService) {}
 
   @Post()
-  createLinks(@AuthUser() authUser: AuthUserDto, @Body() dto: CreateR2LinksDto) {
-    return this.r2LinkService.createLinks(authUser, dto.assetIds, dto.expiresIn || '1h');
+  @Authenticated({ permission: Permission.AssetDownload })
+  @Endpoint({ summary: 'Create R2 direct links for assets' })
+  createLinks(@Auth() auth: AuthDto, @Body() dto: CreateR2LinksDto) {
+    return this.r2LinkService.createLinks(auth, dto.assetIds, dto.expiresIn || '1h');
   }
 
   @Get()
-  getLinks(@AuthUser() authUser: AuthUserDto) {
-    return this.r2LinkService.getLinks(authUser);
+  @Authenticated({ permission: Permission.AssetDownload })
+  @Endpoint({ summary: 'Get all R2 direct links' })
+  getLinks(@Auth() auth: AuthDto) {
+    return this.r2LinkService.getLinks(auth);
   }
 
   @Delete(':id')
-  revokeLink(@AuthUser() authUser: AuthUserDto, @Param('id') id: string) {
-    return this.r2LinkService.revokeLink(authUser, id);
+  @Authenticated({ permission: Permission.AssetDownload })
+  @Endpoint({ summary: 'Revoke an R2 direct link' })
+  revokeLink(@Auth() auth: AuthDto, @Param('id') id: string) {
+    return this.r2LinkService.revokeLink(auth, id);
   }
 
   @Delete()
-  revokeLinks(@AuthUser() authUser: AuthUserDto, @Body() dto: RevokeR2LinksDto) {
-    return this.r2LinkService.revokeLinks(authUser, dto.ids);
+  @Authenticated({ permission: Permission.AssetDownload })
+  @Endpoint({ summary: 'Revoke multiple R2 direct links' })
+  revokeLinks(@Auth() auth: AuthDto, @Body() dto: RevokeR2LinksDto) {
+    return this.r2LinkService.revokeLinks(auth, dto.ids);
   }
 }
