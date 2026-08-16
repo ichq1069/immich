@@ -151,6 +151,7 @@ acl = private
 R2_SECRET_ACCESS_KEY={data['r2_secret_access_key']}
 R2_ENDPOINT={data['r2_endpoint']}
 R2_BUCKET_NAME={data['r2_bucket_name']}
+R2_CUSTOM_DOMAIN={data.get('r2_custom_domain', '')}
 UPLOAD_LOCATION={data['upload_location']}
 DB_DATA_LOCATION={data['db_data_location']}
 DB_USERNAME={data['db_username']}

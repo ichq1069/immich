@@ -219,6 +219,12 @@
         <input id="r2_bucket" value="immich-photo" placeholder="immich-photo">
       </div>
     </div>
+    <div class="row">
+      <div class="field">
+        <label>R2 自定义域名（用于生成直链）</label>
+        <input id="r2_custom_domain" placeholder="例如：photos.example.com">
+      </div>
+    </div>
     <button class="btn-check" id="btnCheckR2" onclick="checkR2()">检查 R2 连通性</button>
     <span id="r2CheckResult" style="margin-left: 12px; font-size: 0.85em;"></span>
   </div>
@@ -317,6 +323,7 @@ function getData() {
     r2_secret_access_key: document.getElementById('r2_secret').value,
     r2_endpoint: document.getElementById('r2_endpoint').value,
     r2_bucket_name: document.getElementById('r2_bucket').value || 'immich',
+    r2_custom_domain: document.getElementById('r2_custom_domain').value,
     db_username: document.getElementById('db_user').value || 'postgres',
     db_password: db_pass,
     db_database_name: document.getElementById('db_name').value || 'immich',
@@ -447,6 +454,7 @@ function generateLocal(data) {
 R2_SECRET_ACCESS_KEY=${data.r2_secret_access_key}
 R2_ENDPOINT=${data.r2_endpoint}
 R2_BUCKET_NAME=${data.r2_bucket_name}
+R2_CUSTOM_DOMAIN=${data.r2_custom_domain || ''}
 UPLOAD_LOCATION=${data.upload_location}
 DB_DATA_LOCATION=${data.db_data_location}
 DB_USERNAME=${data.db_username}
@@ -624,6 +632,7 @@ async function loadConfig() {
     if (cfg.R2_SECRET_ACCESS_KEY) document.getElementById('r2_secret').value = cfg.R2_SECRET_ACCESS_KEY;
     if (cfg.R2_ENDPOINT) document.getElementById('r2_endpoint').value = cfg.R2_ENDPOINT;
     if (cfg.R2_BUCKET_NAME) document.getElementById('r2_bucket').value = cfg.R2_BUCKET_NAME;
+    if (cfg.R2_CUSTOM_DOMAIN) document.getElementById('r2_custom_domain').value = cfg.R2_CUSTOM_DOMAIN;
     if (cfg.DB_USERNAME) document.getElementById('db_user').value = cfg.DB_USERNAME;
     if (cfg.DB_PASSWORD) document.getElementById('db_pass').value = cfg.DB_PASSWORD;
     if (cfg.DB_DATABASE_NAME) document.getElementById('db_name').value = cfg.DB_DATABASE_NAME;

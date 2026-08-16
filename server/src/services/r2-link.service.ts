@@ -111,7 +111,25 @@ export class R2LinkService {
 
   private async generatePresignedUrl(client: S3Client, key: string, expiresAt: Date | null): Promise<string> {
     const bucket = process.env.R2_BUCKET_NAME || 'immich-photo';
+    const customDomain = process.env.R2_CUSTOM_DOMAIN;
 
+    // If custom domain is configured, use it for the URL
+    if (customDomain) {
+      const url = `https://${customDomain}/${key}`;
+      if (expiresAt) {
+        const expiresInSeconds = Math.max(1, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
+        const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+        const presignedUrl = await getSignedUrl(client, command, { expiresIn: expiresInSeconds });
+        // Replace the S3 endpoint with custom domain
+        return presignedUrl.replace(/https:\/\/[^/]+/, `https://${customDomain}`);
+      }
+      // For permanent links, generate a very long-lived presigned URL
+      const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+      const presignedUrl = await getSignedUrl(client, command, { expiresIn: 86400 * 365 * 10 });
+      return presignedUrl.replace(/https:\/\/[^/]+/, `https://${customDomain}`);
+    }
+
+    // Fallback to presigned URL with S3 endpoint
     if (expiresAt) {
       const expiresInSeconds = Math.max(1, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
       const command = new GetObjectCommand({ Bucket: bucket, Key: key });
