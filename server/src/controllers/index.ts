@@ -23,6 +23,7 @@ import { PartnerController } from 'src/controllers/partner.controller';
 import { PersonController } from 'src/controllers/person.controller';
 import { PluginController } from 'src/controllers/plugin.controller';
 import { QueueController } from 'src/controllers/queue.controller';
+import { R2LinkController } from 'src/controllers/r2-link.controller';
 import { SearchController } from 'src/controllers/search.controller';
 import { ServerController } from 'src/controllers/server.controller';
 import { SessionController } from 'src/controllers/session.controller';
@@ -66,6 +67,7 @@ export const controllers = [
   PersonController,
   PluginController,
   QueueController,
+  R2LinkController,
   SearchController,
   ServerController,
   SessionController,
