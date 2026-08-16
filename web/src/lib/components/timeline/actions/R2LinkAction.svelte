@@ -1,6 +1,5 @@
 <script lang="ts">
   import { assetMultiSelectManager } from '$lib/managers/asset-multi-select-manager.svelte';
-  import { authManager } from '$lib/managers/auth-manager.svelte';
   import { createR2Links } from '$lib/services/r2-link.service';
   import { IconButton, modalManager, toastManager } from '@immich/ui';
   import { mdiLinkVariant } from '@mdi/js';
@@ -20,7 +19,7 @@
     if (!result) return;
 
     try {
-      const links = await createR2Links(authManager, {
+      const links = await createR2Links({
         assetIds: assets.map((a) => a.id),
         expiresIn: result.expiresIn,
       });

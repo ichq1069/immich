@@ -1,7 +1,13 @@
 <script lang="ts">
-  import { ModalBase } from '@immich/ui';
+  import { Modal, ModalBody, ModalFooter, Button } from '@immich/ui';
 
   type ExpiryOption = { label: string; value: '1h' | '24h' | '7d' | 'permanent' };
+
+  interface Props {
+    onClose: (result?: { expiresIn: string }) => void;
+  }
+
+  let { onClose }: Props = $props();
 
   const options: ExpiryOption[] = [
     { label: '1 小时', value: '1h' },
@@ -10,30 +16,28 @@
     { label: '永久', value: 'permanent' },
   ];
 
-  let selected: ExpiryOption = options[0];
-
-  const handleConfirm = () => {
-    ModalBase.dispatch({ expiresIn: selected.value });
-  };
+  let selected: ExpiryOption = $state(options[0]);
 </script>
 
-<ModalBase title="选择 R2 直链有效期">
-  <div class="flex flex-col gap-3 p-4">
-    {#each options as option}
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="expiry"
-          value={option.value}
-          checked={selected.value === option.value}
-          onchange={() => (selected = option)}
-        />
-        <span>{option.label}</span>
-      </label>
-    {/each}
-  </div>
-  <div class="flex justify-end gap-2 p-4 border-t">
-    <button class="px-4 py-2 rounded" onclick={() => ModalBase.dispatch(undefined)}>取消</button>
-    <button class="px-4 py-2 rounded bg-primary text-white" onclick={handleConfirm}>确认</button>
-  </div>
-</ModalBase>
+<Modal title="选择 R2 直链有效期" {onClose} size="small">
+  <ModalBody>
+    <div class="flex flex-col gap-3 p-4">
+      {#each options as option}
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="expiry"
+            value={option.value}
+            checked={selected.value === option.value}
+            onchange={() => (selected = option)}
+          />
+          <span>{option.label}</span>
+        </label>
+      {/each}
+    </div>
+  </ModalBody>
+  <ModalFooter>
+    <Button onclick={() => onClose()} color="secondary">取消</Button>
+    <Button onclick={() => onClose({ expiresIn: selected.value })} color="primary">确认</Button>
+  </ModalFooter>
+</Modal>

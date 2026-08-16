@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import UserPageLayout from '$lib/components/layouts/UserPageLayout.svelte';
-  import { authManager } from '$lib/managers/auth-manager.svelte';
   import { getR2Links, revokeR2Link, type R2LinkResponse } from '$lib/services/r2-link.service';
   import { toastManager, Container } from '@immich/ui';
   import { t } from 'svelte-i18n';
@@ -11,7 +10,7 @@
 
   const loadLinks = async () => {
     try {
-      links = await getR2Links(authManager);
+      links = await getR2Links();
     } catch {
       toastManager.error({ message: '加载 R2 直链列表失败', timeout: 3000 });
     } finally {
@@ -23,7 +22,7 @@
 
   const handleRevoke = async (id: string) => {
     try {
-      await revokeR2Link(authManager, id);
+      await revokeR2Link(id);
       links = links.filter((l) => l.id !== id);
       toastManager.success({ message: '已撤销', timeout: 2000 });
     } catch {
