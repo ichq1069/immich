@@ -2,16 +2,16 @@
 
 ## 1. 数据库
 
-- [ ] 1.1 创建 `r2_links` 数据表迁移文件
+- [x] 1.1 创建 `r2_links` 数据表迁移文件
 
 ## 2. 后端核心
 
-- [ ] 2.1 创建 `R2LinkEntity` 实体
-- [ ] 2.2 创建 `IR2LinkRepository` 接口和实现
-- [ ] 2.3 创建 `R2LinkService` 服务（生成预签名 URL、路径转换、CRUD）
-- [ ] 2.4 创建 `R2LinkController` 控制器（API 接口）
-- [ ] 2.5 创建 `R2LinkModule` 模块并注册到 AppModule
-- [ ] 2.6 安装 `@aws-sdk/client-s3` 和 `@aws-sdk/s3-request-presigner` 依赖
+- [x] 2.1 创建 `R2LinkEntity` 实体
+- [x] 2.2 创建 `IR2LinkRepository` 接口和实现
+- [x] 2.3 创建 `R2LinkService` 服务（生成预签名 URL、路径转换、CRUD）
+- [x] 2.4 创建 `R2LinkController` 控制器（API 接口）
+- [x] 2.5 创建 `R2LinkModule` 模块并注册到 AppModule
+- [x] 2.6 安装 `@aws-sdk/client-s3` 和 `@aws-sdk/s3-request-presigner` 依赖
 
 ## 3. Web 前端
 

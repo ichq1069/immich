@@ -21,6 +21,7 @@
     mdiImageMultiple,
     mdiImageMultipleOutline,
     mdiLink,
+    mdiLinkVariant,
     mdiLock,
     mdiLockOutline,
     mdiMagnify,
@@ -55,6 +56,8 @@
   {#if authManager.preferences.sharedLinks.enabled && authManager.preferences.sharedLinks.sidebarWeb}
     <NavbarItem title={$t('shared_links')} href={Route.sharedLinks()} icon={mdiLink} />
   {/if}
+
+  <NavbarItem title="R2 直链" href={Route.r2Links()} icon={mdiLinkVariant} />
 
   <NavbarItem
     title={$t('sharing')}

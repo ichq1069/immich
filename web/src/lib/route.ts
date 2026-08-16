@@ -122,6 +122,9 @@ export const Route = {
   editSharedLink: ({ id }: { id: string }) => `/shared-links/${id}/edit`,
   viewSharedLink: ({ slug, key }: { slug?: string | null; key: string }) => (slug ? `/s/${slug}` : `/share/${key}`),
 
+  // r2 links
+  r2Links: () => '/r2-links',
+
   // settings
   userSettings: (params?: { isOpen?: OpenQueryParam }) => '/user-settings' + asQueryString(params),
 

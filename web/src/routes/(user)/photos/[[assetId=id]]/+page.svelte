@@ -9,8 +9,9 @@
   import ChangeLocation from '$lib/components/timeline/actions/ChangeLocationAction.svelte';
   import CreateSharedLink from '$lib/components/timeline/actions/CreateSharedLinkAction.svelte';
   import DeleteAssets from '$lib/components/timeline/actions/DeleteAssetsAction.svelte';
-  import DownloadAction from '$lib/components/timeline/actions/DownloadAction.svelte';
-  import FavoriteAction from '$lib/components/timeline/actions/FavoriteAction.svelte';
+import DownloadAction from '$lib/components/timeline/actions/DownloadAction.svelte';
+import R2LinkAction from '$lib/components/timeline/actions/R2LinkAction.svelte';
+import FavoriteAction from '$lib/components/timeline/actions/FavoriteAction.svelte';
   import LinkLivePhotoAction from '$lib/components/timeline/actions/LinkLivePhotoAction.svelte';
   import SelectAllAssets from '$lib/components/timeline/actions/SelectAllAction.svelte';
   import SetVisibilityAction from '$lib/components/timeline/actions/SetVisibilityAction.svelte';
@@ -128,6 +129,7 @@
 
       <ButtonContextMenu icon={mdiDotsVertical} title={$t('menu')}>
         <DownloadAction menuItem />
+        <R2LinkAction menuItem />
         {#if assetMultiSelectManager.assets.length > 1 || isAssetStackSelected}
           <StackAction
             unstack={isAssetStackSelected}
