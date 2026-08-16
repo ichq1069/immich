@@ -418,7 +418,6 @@ class LoginForm extends HookConsumerWidget {
                     validator: _validateUrl,
                     keyboardAction: .next,
                     onSubmit: (_) => form.submit(),
-                    readOnly: true,
                   ),
                 ),
                 ImmichTextButton(

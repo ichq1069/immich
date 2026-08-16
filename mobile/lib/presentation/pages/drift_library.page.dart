@@ -76,7 +76,7 @@ class _ActionButtonGrid extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 _ActionButton(
-                  icon: Icons.link_variant,
+                  icon: Icons.link,
                   onTap: () => context.pushRoute(const R2LinkRoute()),
                   label: 'R2 直链',
                 ),
