@@ -74,6 +74,12 @@ class _ActionButtonGrid extends ConsumerWidget {
                   onTap: () => context.pushRoute(const SharedLinkRoute()),
                   label: 'shared_links'.t(context: context),
                 ),
+                const SizedBox(width: 8),
+                _ActionButton(
+                  icon: Icons.link_variant,
+                  onTap: () => context.pushRoute(const R2LinkRoute()),
+                  label: 'R2 直链',
+                ),
                 isTrashEnable ? const SizedBox(width: 8) : const SizedBox.shrink(),
                 isTrashEnable
                     ? _ActionButton(

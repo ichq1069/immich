@@ -17,6 +17,7 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/edit_location_
 import 'package:immich_mobile/presentation/widgets/action_buttons/favorite_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/move_to_lock_folder_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/share_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/action_buttons/r2_link_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/share_link_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/stack_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/trash_action_button.widget.dart';
@@ -97,6 +98,7 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
         const ShareActionButton(source: ActionSource.timeline),
         if (multiselect.hasRemote) ...[
           const ShareLinkActionButton(source: ActionSource.timeline),
+          const R2LinkActionButton(source: ActionSource.timeline),
           if (multiselect.onlyRemote) const DownloadActionButton(source: ActionSource.timeline),
           isTrashEnable
               ? const TrashActionButton(source: ActionSource.timeline)

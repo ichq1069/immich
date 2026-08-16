@@ -1826,6 +1826,22 @@ class SharedLinkRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [R2LinkPage]
+class R2LinkRoute extends PageRouteInfo<void> {
+  const R2LinkRoute({List<PageRouteInfo>? children})
+    : super(R2LinkRoute.name, initialChildren: children);
+
+  static const String name = 'R2LinkRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const R2LinkPage();
+    },
+  );
+}
+
+/// generated route for
 /// [SplashScreenPage]
 class SplashScreenRoute extends PageRouteInfo<void> {
   const SplashScreenRoute({List<PageRouteInfo>? children})

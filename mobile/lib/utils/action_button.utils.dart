@@ -21,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/move_to_lock_f
 import 'package:immich_mobile/presentation/widgets/action_buttons/open_in_browser_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/remove_from_album_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/remove_from_lock_folder_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/action_buttons/r2_link_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/restore_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/set_album_cover.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/set_profile_picture_action_button.widget.dart';
@@ -89,7 +90,8 @@ enum ActionButtonType {
   deleteLocal,
   deletePermanent,
   delete,
-  advancedInfo;
+  advancedInfo,
+  r2Link;
 
   bool shouldShow(ActionButtonContext context) {
     return switch (this) {
@@ -182,6 +184,7 @@ enum ActionButtonType {
             context.isOwner,
       ActionButtonType.cast => context.isCasting || context.asset.hasRemote,
       ActionButtonType.slideshow => true,
+      ActionButtonType.r2Link => context.asset.hasRemote,
     };
   }
 
@@ -195,6 +198,11 @@ enum ActionButtonType {
       ActionButtonType.advancedInfo => ActionMenuItemWidget(action: AssetDebugAction(assets: [context.asset])),
       ActionButtonType.share => ShareActionButton(source: context.source, iconOnly: iconOnly, menuItem: menuItem),
       ActionButtonType.shareLink => ShareLinkActionButton(
+        source: context.source,
+        iconOnly: iconOnly,
+        menuItem: menuItem,
+      ),
+      ActionButtonType.r2Link => R2LinkActionButton(
         source: context.source,
         iconOnly: iconOnly,
         menuItem: menuItem,

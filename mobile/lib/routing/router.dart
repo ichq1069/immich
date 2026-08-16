@@ -30,6 +30,7 @@ import 'package:immich_mobile/pages/library/locked/pin_auth.page.dart';
 import 'package:immich_mobile/pages/library/partner/partner.page.dart';
 import 'package:immich_mobile/pages/library/shared_link/shared_link.page.dart';
 import 'package:immich_mobile/pages/library/shared_link/shared_link_edit.page.dart';
+import 'package:immich_mobile/pages/library/r2_link/r2_link.page.dart';
 import 'package:immich_mobile/pages/login/change_password.page.dart';
 import 'package:immich_mobile/pages/login/login.page.dart';
 import 'package:immich_mobile/pages/search/map/map_location_picker.page.dart';
@@ -138,6 +139,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: FolderRoute.page, guards: [_authGuard]),
     AutoRoute(page: SharedLinkRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: SharedLinkEditRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: R2LinkRoute.page, guards: [_authGuard, _duplicateGuard]),
     CustomRoute(page: MapLocationPickerRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: HeaderSettingsRoute.page, guards: [_duplicateGuard]),
     AutoRoute(page: ShareIntentRoute.page, guards: [_authGuard, _duplicateGuard]),
